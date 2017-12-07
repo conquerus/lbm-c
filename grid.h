@@ -12,7 +12,7 @@
 #define X_DIR 50
 #define Y_DIR 50
 
-#define PLATE_SPEED 0.01
+#define PLATE_SPEED 0.001
 
 extern boltzmann_node domain[X_DIR][Y_DIR];
 
