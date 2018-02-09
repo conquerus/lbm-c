@@ -16,8 +16,8 @@ with the BGK collision approximation and Zou-He boundary conditions.
       example below)
 ** Example
 Below is the result of a lid-driven cavity flow simulation which was
-found using this code. The left figure is plotted using Tecplot,
-and the right figure is plotted using a terminal based plotting
+found using this code. The top figure is plotted using Tecplot,
+and the bottom figure is plotted using a terminal based plotting
 software called [[https://github.com/conquerus/ncplot][NCPlot]].
 
 [[file:./example/example_tecplot.png]][[file:./example/example_ncplot.png]]
