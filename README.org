@@ -1,22 +1,24 @@
 * Lattice Boltzmann Solver in C
 ** Overview
 This program is an implementation of the [[https://en.wikipedia.org/wiki/Lattice_Boltzmann_methods][Lattice Boltzmann Method
-(LBM)]] in C. LBM is a technique for solving the Boltzmann equation and
-can be used to model fluids. This implementation uses a D2Q9 model
-with the BGK collision approximation and Zhou-He boundary conditions.
+(LBM)]] in C. LBM is a technique for solving the Boltzmann equation
+which can be used to model fluids. This implementation uses a D2Q9 model
+with the BGK collision approximation and Zou-He boundary conditions.
 ** Installation and use
-   1. The program uses standard libraries so no additional libraries are needed.
+   1. The program uses standard libraries so no additional libraries
+      should be required.
    2. Install using make ~make clean all~
-   3. run by ~./lbm~
+   3. run with ~./bin/lbm~
    4. the residual history and final solution will be outputed to
       STDOUT. The final solution is formated as:
       |x|y|density|x velocity|y velocity|velocity magnitude|
-   5. plot the answer using your prefered plotting software
+   5. plot the answer using your prefered plotting software (see
+      example below)
 ** Example
-Below is an example of the result lid-driven cavity flow simulation,
-which was found using this program. The left figure is plotted using
-Tecplot, and the right figure is plotted using a terminal based
-plotting software called [[https://github.com/conquerus/ncplot][NCPlot]].
+Below is the result of a lid-driven cavity flow simulation which was
+found using this code. The left figure is plotted using Tecplot,
+and the right figure is plotted using a terminal based plotting
+software called [[https://github.com/conquerus/ncplot][NCPlot]].
 
 [[file:./example/example_tecplot.png]][[file:./example/example_ncplot.png]]
 
