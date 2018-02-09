@@ -9,10 +9,10 @@ with the BGK collision approximation and Zou-He boundary conditions.
       should be required.
    2. Install using make ~make clean all~
    3. run with ~./bin/lbm~
-   4. the residual history and final solution will be outputed to
-      STDOUT. The final solution is formated as:
+   4. the residual history and final solution will be outputted to
+      STDOUT. The final solution is formatted as:
       |x|y|density|x velocity|y velocity|velocity magnitude|
-   5. plot the answer using your prefered plotting software (see
+   5. plot the answer using your preferred plotting software (see
       example below)
 ** Example
 Below is the result of a lid-driven cavity flow simulation which was
