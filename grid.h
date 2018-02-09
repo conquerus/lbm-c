@@ -9,10 +9,10 @@
 #include "node_state.h"
 #endif
 
-#define X_DIR 50
-#define Y_DIR 50
+#define X_DIR 100
+#define Y_DIR 100
 
-#define PLATE_SPEED 0.001
+#define PLATE_SPEED 0.005
 
 extern boltzmann_node domain[X_DIR][Y_DIR];
 

@@ -8,12 +8,11 @@
 #include <math.h>
 #include <assert.h>
 
-#define RESIDUAL_MIN 0.000000001
+#define RESIDUAL_MIN 0.00000001
 #define TOL 0.00001
 #define VELOCITY_DIRECTIONS 9
 
-#define TAO 0.53
-//#define TAO 0.01
+#define TAO 0.503
 
 typedef struct {
   double x;

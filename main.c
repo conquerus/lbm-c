@@ -6,13 +6,10 @@
 #include "solver.h"
 #endif
 
-#define _GNU_SOURCE
-#include <fenv.h>
+#define MAX_ITERATIONS 1E7
 
 int main(int argc, char* argv[])
 {
-
-  feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
 
   boltzmann_node* domain;
   vector_2D* old_u;
@@ -22,15 +19,15 @@ int main(int argc, char* argv[])
   
   dm_init(domain);
 
-  int num_iterations = 160000;
+
   double residual;
   
   //header
   printf("VARIABLES = \"X\" \"Y\" \"RHO\" \"U\" \"V\" \"V_MAG\"\n");
   printf("ZONE T=\"MAIN\" I = %d J = %d\n", X_DIR, Y_DIR);
   printf("DATAPACKING = POINT \n");
-
-  for (int i = 0; i < num_iterations; i++){
+  
+  for (int i = 0; i < MAX_ITERATIONS; i++){
 
     solv_collide(domain);
     solv_stream(domain);
@@ -54,7 +51,8 @@ int main(int argc, char* argv[])
     
   }
 
-  dm_output(domain);  
+  dm_output(domain);
+  
   free(domain);
   free(old_u);
   

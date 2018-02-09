@@ -48,7 +48,10 @@ int dm_output(boltzmann_node* dm)
   for (int i = 0; i < X_DIR; i++){
     for (int j = 0; j < Y_DIR; j++){
       p = (dm + i * X_DIR + j);
-      printf("%d    %d    %f    %f    %f    %f\n", i, j, p->rho, p->u.x, p->u.y, p->u.x*p->u.x + p->u.y*p->u.y);
+      
+      //printf("%d %d %f %f %f %f\n",
+      printf("%.10e %.10e %.10e %.10e %.10e %.10e\n",
+             (double) i, (double) j, p->rho, p->u.x, p->u.y, sqrt(p->u.x*p->u.x + p->u.y*p->u.y));
     }
   }
 

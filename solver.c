@@ -4,8 +4,7 @@
 
 #include <string.h>
 
-/* streaming - this is very slow right now because of the duplication
-   of f, but it makes it easier to code :)*/
+/* streaming */
 void solv_update_node(boltzmann_node* dm)
 {
   for (int i = 0; i < VELOCITY_DIRECTIONS; i++){
@@ -37,9 +36,6 @@ void solv_stream(boltzmann_node* dm)
       solv_update_node(dm + i * X_DIR + j);
     }
   }
-
-  //solv_update_f(dm);
-
 
   //boundary nodes
 
@@ -128,27 +124,26 @@ void solv_stream(boltzmann_node* dm)
     }
   }
 
+  //east
+  i = (X_DIR - 1);
+  for (j = 1; j < (Y_DIR - 1); j++){
+    /*special stuff*/
+    (dm + i * X_DIR + j)->f_new[3] = (dm + i * X_DIR + j)->f[1];
+    (dm + i * X_DIR + j)->f_new[6] = (dm + i * X_DIR + j)->f[8];
+    (dm + i * X_DIR + j)->f_new[7] = (dm + i * X_DIR + j)->f[5];
+  }
 
-    
-    //east
-    i = (X_DIR - 1);
-    for (j = 1; j < (Y_DIR - 1); j++){
-      /*special stuff*/
-      (dm + i * X_DIR + j)->f_new[3] = (dm + i * X_DIR + j)->f[1];
-      (dm + i * X_DIR + j)->f_new[6] = (dm + i * X_DIR + j)->f[8];
-      (dm + i * X_DIR + j)->f_new[7] = (dm + i * X_DIR + j)->f[5];
-    }
+  //west
+  i = 0;
+  for (j = 1; j < (Y_DIR - 1); j++){
+    /*special stuff*/
+    (dm + i * X_DIR + j)->f_new[1] = (dm + i * X_DIR + j)->f[3];
+    (dm + i * X_DIR + j)->f_new[5] = (dm + i * X_DIR + j)->f[7];
+    (dm + i * X_DIR + j)->f_new[8] = (dm + i * X_DIR + j)->f[6];
+  }
 
-    //west
-    i = 0;
-    for (j = 1; j < (Y_DIR - 1); j++){
-      /*special stuff*/
-      (dm + i * X_DIR + j)->f_new[1] = (dm + i * X_DIR + j)->f[3];
-      (dm + i * X_DIR + j)->f_new[5] = (dm + i * X_DIR + j)->f[7];
-      (dm + i * X_DIR + j)->f_new[8] = (dm + i * X_DIR + j)->f[6];
-    }
-
-    if(true){ //periodic
+  //periodic (for couette flow)
+  if(false){ 
     //east
     i = (X_DIR - 1);
     for (j = 1; j < (Y_DIR -1 ); j++){
@@ -166,210 +161,77 @@ void solv_stream(boltzmann_node* dm)
       (dm + i * X_DIR + j)->f_new[5] = (dm + (X_DIR - 1) * X_DIR + j - 1)->f[5];
       (dm + i * X_DIR + j)->f_new[8] = (dm + (X_DIR - 1) * X_DIR + j + 1)->f[8];
     }
-    }      
+  }      
 
-    //south
-    j = 0;
-    for (i = 1; i < (X_DIR-1); i++){
-      /*special stuff*/
-      (dm + i * X_DIR + j)->f_new[2] = (dm + i * X_DIR + j)->f[4];
-      (dm + i * X_DIR + j)->f_new[5] = (dm + i * X_DIR + j)->f[7];
-      (dm + i * X_DIR + j)->f_new[6] = (dm + i * X_DIR + j)->f[8];
-    }
-
-    /**********************************/
-    /* //////////////////////periodic */
-    /**********************************/
-        //SW
-    i = 0;
-    j = 0;  
+  //south
+  j = 0;
+  for (i = 1; i < (X_DIR-1); i++){
     /*special stuff*/
     (dm + i * X_DIR + j)->f_new[2] = (dm + i * X_DIR + j)->f[4];
     (dm + i * X_DIR + j)->f_new[5] = (dm + i * X_DIR + j)->f[7];
     (dm + i * X_DIR + j)->f_new[6] = (dm + i * X_DIR + j)->f[8];
-
-    (dm + i * X_DIR + j)->f_new[1] = (dm + (X_DIR - 1) * X_DIR + j + 0)->f[1];
-    //(dm + i * X_DIR + j)->f_new[5] = (dm + (X_DIR - 1) * X_DIR + j)->f[5];
-    (dm + i * X_DIR + j)->f_new[8] = (dm + (X_DIR - 1) * X_DIR + j + 1)->f[8];
-    //SE
-    i = (X_DIR - 1);
-    j = 0;
-    /*special stuff*/
-    (dm + i * X_DIR + j)->f_new[2] = (dm + i * X_DIR + j)->f[4];
-    (dm + i * X_DIR + j)->f_new[5] = (dm + i * X_DIR + j)->f[7];
-  
-    (dm + i * X_DIR + j)->f_new[3] = (dm + i * X_DIR + j)->f[1];
-    (dm + i * X_DIR + j)->f_new[6] = (dm + i * X_DIR + j)->f[8];
-    (dm + i * X_DIR + j)->f_new[7] = (dm + i * X_DIR + j)->f[5];
-
-    (dm + i * X_DIR + j)->f_new[3] = (dm + j + 0)->f[3];
-    (dm + i * X_DIR + j)->f_new[7] = (dm + j + 1)->f[7];
-
-    //north
-    j = Y_DIR - 1;
-    for (int i =1; i < X_DIR - 1; i++){
-      (dm + i * X_DIR + j)->f_new[4] = (dm + i * X_DIR + j)->f[2];
-      (dm + i * X_DIR + j)->f_new[7] = (dm + i * X_DIR + j)->f[5] - 0.5*PLATE_SPEED;
-      (dm + i * X_DIR + j)->f_new[8] = (dm + i * X_DIR + j)->f[6] + 0.5*PLATE_SPEED;
-    }
-    
-    //NW
-    i = 0;
-    j = Y_DIR - 1;
-    /*special stuff*/
-
-    (dm + i * X_DIR + j)->f_new[4] = (dm + i * X_DIR + j)->f[2];
-    (dm + i * X_DIR + j)->f_new[7] = (dm + i * X_DIR + j)->f[5];
-    (dm + i * X_DIR + j)->f_new[8] = (dm + i * X_DIR + j)->f[6];
-
-    (dm + i * X_DIR + j)->f_new[1] = (dm + (X_DIR - 1) * X_DIR + j + 0)->f[1];
-    (dm + i * X_DIR + j)->f_new[5] = (dm + (X_DIR - 1) * X_DIR + j - 1)->f[5];
-    
-    //NE
-    i = X_DIR - 1;
-    j = Y_DIR - 1;
-    /*special stuff*/
-
-    (dm + i * X_DIR + j)->f_new[4] = (dm + i * X_DIR + j)->f[2];
-    (dm + i * X_DIR + j)->f_new[7] = (dm + i * X_DIR + j)->f[5];
-    (dm + i * X_DIR + j)->f_new[8] = (dm + i * X_DIR + j)->f[6];
-  
-    (dm + i * X_DIR + j)->f_new[3] = (dm + j + 0)->f[3];
-    (dm + i * X_DIR + j)->f_new[6] = (dm + j - 1)->f[6];
-    ////////////////////////////////////
-
-    /*       //initial condition */
-    /* double e_dot_u; */
-    /* double e_dot_u_sqr; */
-    /* double u_dot_u; */
-
-    /* vector_2D init_U; */
-    /* init_U.x = PLATE_SPEED; */
-    /* init_U.y = 0.0; */
-
-    /* double init_rho = 1.0; */
-    
-    /* j= Y_DIR - 1; */
-    /* for (i = 0; i < X_DIR; i++){ */
-    /*   for (int k = 0; k < VELOCITY_DIRECTIONS; k++){ */
-    /*     e_dot_u = e[k].x * init_U.x + e[k].y * init_U.y; */
-    /*     e_dot_u_sqr = e_dot_u * e_dot_u; */
-    /*     u_dot_u = init_U.x * init_U.x + init_U.y * init_U.y; */
-    
-    /*     (dm + i * X_DIR + j)->f[k] = (W[k] * init_rho) * ( 1.0 */
-    /*                                                        + (3.0 * e_dot_u) */
-    /*                                                        + ((9.0/2.0) * e_dot_u_sqr) */
-    /*                                                        - ((3.0/2.0) * u_dot_u)); */
-    /*     (dm + i * X_DIR + j)->f_new[k] = (W[k] * init_rho) * ( 1.0 */
-    /*                                                            + (3.0 * e_dot_u) */
-    /*                                                            + ((9.0/2.0) * e_dot_u_sqr) */
-    /*                                                            - ((3.0/2.0) * u_dot_u)); */
-    /*   } */
-    /* } */
-
-  //solv_update_f(dm); 
-  if (false){
-  //apply BCs
-    //SW
-    i = 0;
-    j = 0;  
-    /*special stuff*/
-    (dm + i * X_DIR + j)->f_new[2] = (dm + i * X_DIR + j)->f[4];
-    (dm + i * X_DIR + j)->f_new[5] = (dm + i * X_DIR + j)->f[7];
-    (dm + i * X_DIR + j)->f_new[6] = (dm + i * X_DIR + j)->f[8];
-
-    (dm + i * X_DIR + j)->f_new[1] = (dm + i * X_DIR + j)->f[3];
-    (dm + i * X_DIR + j)->f_new[8] = (dm + i * X_DIR + j)->f[6];
-
-    //SE
-    i = (X_DIR - 1);
-    j = 0;
-    /*special stuff*/
-    (dm + i * X_DIR + j)->f_new[2] = (dm + i * X_DIR + j)->f[4];
-    (dm + i * X_DIR + j)->f_new[5] = (dm + i * X_DIR + j)->f[7];
-  
-    (dm + i * X_DIR + j)->f_new[3] = (dm + i * X_DIR + j)->f[1];
-    (dm + i * X_DIR + j)->f_new[6] = (dm + i * X_DIR + j)->f[8];
-    (dm + i * X_DIR + j)->f_new[7] = (dm + i * X_DIR + j)->f[5];
-
-    //solv_update_f(dm);
-
-    
-    //NW
-    i = 0;
-    j = (Y_DIR - 1);
-    /*special stuff*/
-    rho = (dm + i * X_DIR + j)->f[0]
-      +(dm + i * X_DIR + j)->f[1]
-      +(dm + i * X_DIR + j)->f[3]
-      + 2.0 * ((dm + i * X_DIR + j)->f[2]
-               +(dm + i * X_DIR + j)->f[5]
-               +(dm + i * X_DIR + j)->f[6]);
-      
-    (dm + i * X_DIR + j)->f_new[4] = (dm + i * X_DIR + j)->f[2];
-    (dm + i * X_DIR + j)->f_new[7] = (dm + i * X_DIR + j)->f[5]
-    //+ (1.0/2.0) * ((dm + i * X_DIR + j)->f[1] - (dm + i * X_DIR + j)->f[3])
-    //- (1.0/2.0) * rho * PLATE_SPEED;
-      - (1.0/6.0) * rho * PLATE_SPEED;
-    //assert((dm + i * X_DIR + j)->f_new[7] > 0.0);
-    (dm + i * X_DIR + j)->f_new[8] = (dm + i * X_DIR + j)->f[6]
-      //+ (1.0/2.0) * ((dm + i * X_DIR + j)->f[3] - (dm + i * X_DIR + j)->f[1])
-      //+ (1.0/2.0) * rho * PLATE_SPEED;
-      + (1.0/6.0) * rho * PLATE_SPEED;
-      
-    //assert((dm + i * X_DIR + j)->f_new[8] > 0.0);
-    (dm + i * X_DIR + j)->f_new[1] = (dm + i * X_DIR + j)->f[3];
-    (dm + i * X_DIR + j)->f_new[5] = (dm + i * X_DIR + j)->f[7];
-
-    //NE
-    i = (X_DIR - 1);
-    j = (Y_DIR - 1);
-    /*special stuff*/
-    rho = (dm + i * X_DIR + j)->f[0]
-      +(dm + i * X_DIR + j)->f[1]
-      +(dm + i * X_DIR + j)->f[3]
-      + 2.0 * ((dm + i * X_DIR + j)->f[2]
-               +(dm + i * X_DIR + j)->f[5]
-               +(dm + i * X_DIR + j)->f[6]);
-      
-    (dm + i * X_DIR + j)->f_new[4] = (dm + i * X_DIR + j)->f[2];
-    (dm + i * X_DIR + j)->f_new[7] = (dm + i * X_DIR + j)->f[5]
-      //+ (1.0/2.0) * ((dm + i * X_DIR + j)->f[1] - (dm + i * X_DIR + j)->f[3])
-      //- (1.0/2.0) * rho * PLATE_SPEED;
-      - (1.0/6.0) * rho * PLATE_SPEED;
-    (dm + i * X_DIR + j)->f_new[8] = (dm + i * X_DIR + j)->f[6]
-      //+ (1.0/2.0) * ((dm + i * X_DIR + j)->f[3] - (dm + i * X_DIR + j)->f[1])
-      //+ (1.0/2.0) * rho * PLATE_SPEED;
-      + (1.0/6.0) * rho * PLATE_SPEED;
-
-    //special stuff
-    (dm + i * X_DIR + j)->f_new[3] = (dm + i * X_DIR + j)->f[1];
-    (dm + i * X_DIR + j)->f_new[6] = (dm + i * X_DIR + j)->f[8];
-    
-    //north
-    j = (Y_DIR - 1);
-    for (i = 1; i < (X_DIR - 1); i++){
-      /*special stuff*/
-      rho = (dm + i * X_DIR + j)->f[0]
-        +(dm + i * X_DIR + j)->f[1]
-        +(dm + i * X_DIR + j)->f[3]
-        + 2.0 * ((dm + i * X_DIR + j)->f[2]
-                 +(dm + i * X_DIR + j)->f[5]
-                 +(dm + i * X_DIR + j)->f[6]);
-      
-      (dm + i * X_DIR + j)->f_new[4] = (dm + i * X_DIR + j)->f[2];
-      (dm + i * X_DIR + j)->f_new[7] = (dm + i * X_DIR + j)->f[5]
-        //+ (1.0/2.0) * ((dm + i * X_DIR + j)->f[1] - (dm + i * X_DIR + j)->f[3])
-        //
-        - (1.0/6.0) * rho * PLATE_SPEED;
-      //assert((dm + i * X_DIR + j)->f_new[7] > 0.0);
-      (dm + i * X_DIR + j)->f_new[8] = (dm + i * X_DIR + j)->f[6]
-        //+ (1.0/2.0) * ((dm + i * X_DIR + j)->f[3] - (dm + i * X_DIR + j)->f[1])
-        //+ (1.0/2.0) * rho * PLATE_SPEED;
-        + (1.0/6.0) * rho * PLATE_SPEED;
-      //assert((dm + i * X_DIR + j)->f_new[8] > 0.0);
-    }
   }
+
+  /**********************************/
+  /* periodic */
+  /**********************************/
+  /*     //SW */
+  /* i = 0; */
+  /* j = 0;   */
+  /* /\*special stuff*\/ */
+  /* (dm + i * X_DIR + j)->f_new[2] = (dm + i * X_DIR + j)->f[4]; */
+  /* (dm + i * X_DIR + j)->f_new[5] = (dm + i * X_DIR + j)->f[7]; */
+  /* (dm + i * X_DIR + j)->f_new[6] = (dm + i * X_DIR + j)->f[8]; */
+
+  /* (dm + i * X_DIR + j)->f_new[1] = (dm + (X_DIR - 1) * X_DIR + j + 0)->f[1]; */
+  /* //(dm + i * X_DIR + j)->f_new[5] = (dm + (X_DIR - 1) * X_DIR + j)->f[5]; */
+  /* (dm + i * X_DIR + j)->f_new[8] = (dm + (X_DIR - 1) * X_DIR + j + 1)->f[8]; */
+  /* //SE */
+  /* i = (X_DIR - 1); */
+  /* j = 0; */
+  /* /\*special stuff*\/ */
+  /* (dm + i * X_DIR + j)->f_new[2] = (dm + i * X_DIR + j)->f[4]; */
+  /* (dm + i * X_DIR + j)->f_new[5] = (dm + i * X_DIR + j)->f[7]; */
+  
+  /* (dm + i * X_DIR + j)->f_new[3] = (dm + i * X_DIR + j)->f[1]; */
+  /* (dm + i * X_DIR + j)->f_new[6] = (dm + i * X_DIR + j)->f[8]; */
+  /* (dm + i * X_DIR + j)->f_new[7] = (dm + i * X_DIR + j)->f[5]; */
+
+  /* (dm + i * X_DIR + j)->f_new[3] = (dm + j + 0)->f[3]; */
+  /* (dm + i * X_DIR + j)->f_new[7] = (dm + j + 1)->f[7]; */
+
+  /* //north */
+  /* j = Y_DIR - 1; */
+  /* for (int i =1; i < X_DIR - 1; i++){ */
+  /*   (dm + i * X_DIR + j)->f_new[4] = (dm + i * X_DIR + j)->f[2]; */
+  /*   (dm + i * X_DIR + j)->f_new[7] = (dm + i * X_DIR + j)->f[5] - 0.5*PLATE_SPEED; */
+  /*   (dm + i * X_DIR + j)->f_new[8] = (dm + i * X_DIR + j)->f[6] + 0.5*PLATE_SPEED; */
+  /* } */
+    
+  //NW
+  /* i = 0; */
+  /* j = Y_DIR - 1; */
+  /* /\*special stuff*\/ */
+
+  /* (dm + i * X_DIR + j)->f_new[4] = (dm + i * X_DIR + j)->f[2]; */
+  /* (dm + i * X_DIR + j)->f_new[7] = (dm + i * X_DIR + j)->f[5]; */
+  /* (dm + i * X_DIR + j)->f_new[8] = (dm + i * X_DIR + j)->f[6]; */
+
+  /* (dm + i * X_DIR + j)->f_new[1] = (dm + (X_DIR - 1) * X_DIR + j + 0)->f[1]; */
+  /* (dm + i * X_DIR + j)->f_new[5] = (dm + (X_DIR - 1) * X_DIR + j - 1)->f[5]; */
+    
+  /* //NE */
+  /* i = X_DIR - 1; */
+  /* j = Y_DIR - 1; */
+  /* /\*special stuff*\/ */
+
+  /* (dm + i * X_DIR + j)->f_new[4] = (dm + i * X_DIR + j)->f[2]; */
+  /* (dm + i * X_DIR + j)->f_new[7] = (dm + i * X_DIR + j)->f[5]; */
+  /* (dm + i * X_DIR + j)->f_new[8] = (dm + i * X_DIR + j)->f[6]; */
+  
+  /* (dm + i * X_DIR + j)->f_new[3] = (dm + j + 0)->f[3]; */
+  /* (dm + i * X_DIR + j)->f_new[6] = (dm + j - 1)->f[6]; */
+  ////////////////////////////////////
 
 }
 
@@ -383,10 +245,10 @@ void solv_collide_node(boltzmann_node* dm)
   for (int i = 0; i < VELOCITY_DIRECTIONS; i++){
     dm->f[i] = dm->f[i] - (1.0/TAO) * (dm->f[i] - f_eq[i]);
     
-    /* if (dm->f[i] < 0){ */
-    /*   printf("ERROR negative distribution function"); */
-    /*   assert(dm->f[i] > 0); */
-    /* } */
+    if (dm->f[i] < 0){
+      printf("ERROR negative distribution function");
+      assert(dm->f[i] > 0);
+    }
     
   }
 }
@@ -406,6 +268,7 @@ void solv_update_macro_node(boltzmann_node* dm)
   vector_2D temp_u;
     
   dm->rho = bn_get_rho(dm);
+  
   temp_u = bn_get_u(dm);
   dm->u.x = temp_u.x;
   dm->u.y = temp_u.y;
@@ -424,7 +287,6 @@ void solv_update_macro(boltzmann_node* dm)
 /* calculate residual */
 double solv_residual(boltzmann_node* dm, vector_2D* old_u)
 {
-  //WIP
   double residual = 0.0;
   double total = 0.0;
   

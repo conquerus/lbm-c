@@ -85,10 +85,10 @@ void bn_eq_dist(boltzmann_node* bn, double f_eq[VELOCITY_DIRECTIONS])
                                    + ((9.0/2.0) * e_dot_u_sqr)
                                    - ((3.0/2.0) * u_dot_u));
 
-    /* if (f_eq[i] < 0){ */
-    /*   printf("ERROR negative distribution function"); */
-    /*   assert(f_eq[i] > 0); */
-    /* } */
+    if (f_eq[i] < 0){
+      printf("ERROR negative distribution function");
+      assert(f_eq[i] > 0);
+    }
 
   }
 }
